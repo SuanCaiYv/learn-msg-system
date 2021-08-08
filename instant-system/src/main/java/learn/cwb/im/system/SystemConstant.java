@@ -24,5 +24,7 @@ public class SystemConstant {
 
     public static final String USER_INBOX_PREFIX = "USER_INBOX_";
 
+    public static final String IM_NODE_PATH_PREFIX = "/MSG/IM/NODE";
+
     public static final String KAFKA_TOPIC = "msg-dev";
 }

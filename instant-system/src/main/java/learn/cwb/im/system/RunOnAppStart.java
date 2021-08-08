@@ -11,6 +11,11 @@ import learn.cwb.common.transport.Msg;
 import learn.cwb.common.util.NativeUtils;
 import learn.cwb.im.handler.DirectHandler;
 import learn.cwb.im.handler.GlobalVariable;
+import learn.cwb.im.zookeeper.ZookeeperOps;
+import learn.cwb.im.zookeeper.impl.ZookeeperOpsImpl;
+
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 
 /**
  * @author CodeWithBuff(给代码来点Buff)
@@ -35,5 +40,16 @@ public class RunOnAppStart {
                 .connect("127.0.0.1", 10410)
                 .syncUninterruptibly();
         GlobalVariable.GATEWAY = channelFuture.channel();
+    }
+
+    private static void registerWithZookeeper() {
+        try {
+            ZookeeperOps zookeeperOps = new ZookeeperOpsImpl();
+            InetAddress address = InetAddress.getLocalHost();
+            String myAddress = address.getHostAddress() + ":" + SystemConstant.MY_PORT;
+            zookeeperOps.addTmpNode(SystemConstant.IM_NODE_PATH_PREFIX + "/" + myAddress);
+        } catch (UnknownHostException e) {
+            e.printStackTrace();
+        }
     }
 }
