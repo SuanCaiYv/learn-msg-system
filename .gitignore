@@ -1,0 +1,4 @@
+# Project exclude paths
+/common/target/
+/gateway/target/
+/instant-system/target/
