@@ -21,6 +21,8 @@ public class ForwardHandler extends ChannelInboundHandlerAdapter {
         Msg msg = (Msg) msg0;
         long receiverId = msg.getHead().getReceiverId();
         String address = (String) REDIS_OPS.getObj(SystemConstant.USER_IN_CLUSTER_PREFIX + receiverId);
+        System.out.println(receiverId);
+        System.out.println(address);
         // 用户未上线
         if (address == null) {
             ;
@@ -33,6 +35,7 @@ public class ForwardHandler extends ChannelInboundHandlerAdapter {
                 // TODO 错误处理
                 ctx.writeAndFlush(err);
             } else {
+                System.out.println("write: " + address);
                 channel.writeAndFlush(msg);
             }
         }

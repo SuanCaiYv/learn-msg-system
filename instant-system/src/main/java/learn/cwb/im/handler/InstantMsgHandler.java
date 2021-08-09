@@ -32,6 +32,7 @@ public class InstantMsgHandler extends ChannelInboundHandlerAdapter {
     @Override
     public void channelRead(ChannelHandlerContext ctx, Object msg0) throws Exception {
         Msg msg = (Msg) msg0;
+        System.out.println(msg.getHead().getReceiverId());
         long receiverId = msg.getHead().getReceiverId();
         // 接收者不在此服务器，或下线了
         if (!CHANNEL_MAP.containsKey(receiverId)) {

@@ -18,7 +18,7 @@ public class InstantMessageApplication {
     private static final Logger LOGGER = LoggerFactory.getLogger(InstantMessageApplication.class);
 
     public static void main(String[] args) {
-        RunOnAppStart.hook();
+        RunOnAppStart.hookBeforeStart();
         ServerBootstrap serverBootstrap = new ServerBootstrap();
         ChannelFuture channelFuture = serverBootstrap
                 .channel(NativeUtils.serverChannel())
@@ -26,5 +26,6 @@ public class InstantMessageApplication {
                 .childHandler(new ChildChannelPipelineInitializer())
                 .bind("127.0.0.1", SystemConstant.MY_PORT)
                 .syncUninterruptibly();
+        RunOnAppStart.hookAfterStart();
     }
 }

@@ -17,7 +17,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.net.InetAddress;
+import java.net.NetworkInterface;
 import java.net.UnknownHostException;
+import java.util.Enumeration;
 
 /**
  * @author CodeWithBuff(给代码来点Buff)
@@ -51,6 +53,16 @@ public class NativeUtils {
         }
     }
 
+    public static EventLoopGroup singleEventLoopGroup() {
+        if (osName.contains("macos") || osName.contains("osx")) {
+            return new KQueueEventLoopGroup(1);
+        } else if (osName.contains("linux")) {
+            return new EpollEventLoopGroup(1);
+        } else {
+            return new NioEventLoopGroup(1);
+        }
+    }
+
     public static Class<? extends ServerChannel> serverChannel() {
         if (osName.contains("macos") || osName.contains("osx")) {
             return KQueueServerSocketChannel.class;
@@ -78,5 +90,39 @@ public class NativeUtils {
         } catch (UnknownHostException e) {
             return null;
         }
+    }
+
+    /**
+     * 网上扒的获取本机真实IP的方法
+     */
+    public static InetAddress getLocalHostExactAddress() {
+        try {
+            InetAddress candidateAddress = null;
+            Enumeration<NetworkInterface> networkInterfaces = NetworkInterface.getNetworkInterfaces();
+            while (networkInterfaces.hasMoreElements()) {
+                NetworkInterface networkInterface = networkInterfaces.nextElement();
+                // 该网卡接口下的ip会有多个，也需要一个个的遍历，找到自己所需要的
+                for (Enumeration<InetAddress> inetAddresses = networkInterface.getInetAddresses(); inetAddresses.hasMoreElements(); ) {
+                    InetAddress inetAddress = inetAddresses.nextElement();
+                    // 排除loopback回环类型地址（不管是IPv4还是IPv6 只要是回环地址都会返回true）
+                    if (!inetAddress.isLoopbackAddress()) {
+                        if (inetAddress.isSiteLocalAddress()) {
+                            // 如果是site-local地址，就是它了 就是我们要找的
+                            // ~~~~~~~~~~~~~绝大部分情况下都会在此处返回你的ip地址值~~~~~~~~~~~~~
+                            return inetAddress;
+                        }
+                        // 若不是site-local地址 那就记录下该地址当作候选
+                        if (candidateAddress == null) {
+                            candidateAddress = inetAddress;
+                        }
+                    }
+                }
+            }
+            // 如果出去loopback回环地之外无其它地址了，那就回退到原始方案吧
+            return candidateAddress == null ? InetAddress.getLocalHost() : candidateAddress;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 }

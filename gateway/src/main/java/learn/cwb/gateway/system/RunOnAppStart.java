@@ -14,7 +14,6 @@ import learn.cwb.gateway.handler.GlobalVariable;
 import learn.cwb.gateway.zookeeper.ZookeeperOps;
 import learn.cwb.gateway.zookeeper.impl.ZookeeperOpsImpl;
 import org.apache.zookeeper.WatchedEvent;
-import org.apache.zookeeper.Watcher;
 
 import java.util.HashSet;
 import java.util.List;
@@ -42,20 +41,15 @@ public class RunOnAppStart {
 
     private static void watchedEvents(WatchedEvent event) {
         Set<String> now = new HashSet<>(ZOOKEEPER_OPS.getChild(SystemConstant.IM_NODE_PATH_PREFIX, RunOnAppStart::watchedEvents));
-        if (event.getType().equals(Watcher.Event.EventType.NodeCreated)) {
-            for (String address : GlobalVariable.SERVERS.keySet()) {
-                if (!now.contains(address)) {
-                    delNode(address);
-                }
+        for (String address : GlobalVariable.SERVERS.keySet()) {
+            if (!now.contains(address)) {
+                delNode(address);
             }
-        } else if (event.getType().equals(Watcher.Event.EventType.NodeDeleted)) {
-            for (String address : now) {
-                if (!GlobalVariable.SERVERS.containsKey(address)) {
-                    setNode(address);
-                }
+        }
+        for (String address : now) {
+            if (!GlobalVariable.SERVERS.containsKey(address)) {
+                setNode(address);
             }
-        } else {
-            // do nothing
         }
     }
 

@@ -15,7 +15,6 @@ import learn.cwb.im.zookeeper.ZookeeperOps;
 import learn.cwb.im.zookeeper.impl.ZookeeperOpsImpl;
 
 import java.net.InetAddress;
-import java.net.UnknownHostException;
 
 /**
  * @author CodeWithBuff(给代码来点Buff)
@@ -23,7 +22,7 @@ import java.net.UnknownHostException;
  * @time 2021/8/8 4:02 下午
  */
 public class RunOnAppStart {
-    public static void hook() {
+    public static void hookBeforeStart() {
         Bootstrap bootstrap = new Bootstrap();
         ChannelFuture channelFuture = bootstrap
                 .channel(NativeUtils.clientChannel())
@@ -42,14 +41,17 @@ public class RunOnAppStart {
         GlobalVariable.GATEWAY = channelFuture.channel();
     }
 
+    public static void hookAfterStart() {
+        registerWithZookeeper();
+    }
+
     private static void registerWithZookeeper() {
-        try {
-            ZookeeperOps zookeeperOps = new ZookeeperOpsImpl();
-            InetAddress address = InetAddress.getLocalHost();
-            String myAddress = address.getHostAddress() + ":" + SystemConstant.MY_PORT;
-            zookeeperOps.addTmpNode(SystemConstant.IM_NODE_PATH_PREFIX + "/" + myAddress);
-        } catch (UnknownHostException e) {
-            e.printStackTrace();
-        }
+        ZookeeperOps zookeeperOps = new ZookeeperOpsImpl();
+        InetAddress address = NativeUtils.getLocalHostExactAddress();
+        // TODO 有bug，找不到真实IP
+        String ipStr = "127.0.0.1";
+        assert address != null;
+        String myAddress = ipStr + ":" + SystemConstant.MY_PORT;
+        zookeeperOps.addTmpNode(SystemConstant.IM_NODE_PATH_PREFIX + "/" + myAddress);
     }
 }

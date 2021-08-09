@@ -190,6 +190,14 @@ public class Msg {
         return msg;
     }
 
+    public static Msg withEstablish(long senderId) {
+        Msg msg = withEmpty();
+        msg.getHead().setType(Head.Type.ESTABLISH);
+        msg.getHead().setSenderId(senderId);
+        msg.getHead().setReceiverId(0);
+        return msg;
+    }
+
     public static Msg withPing() {
         Msg msg = withEmpty();
         Head h = msg.head;
@@ -217,6 +225,19 @@ public class Msg {
         Head h = msg.head;
         h.setType(Head.Type.TEXT);
         h.setSize(src.length);
+        Body b = msg.body;
+        b.setBody(src);
+        return msg;
+    }
+
+    public static Msg withText(String text, long senderId, long receiverId) {
+        byte[] src = text.getBytes();
+        Msg msg = withEmpty();
+        Head h = msg.head;
+        h.setType(Head.Type.TEXT);
+        h.setSize(src.length);
+        h.setSenderId(senderId);
+        h.setReceiverId(receiverId);
         Body b = msg.body;
         b.setBody(src);
         return msg;
