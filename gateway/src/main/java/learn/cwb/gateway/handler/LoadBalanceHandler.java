@@ -5,7 +5,6 @@ import io.netty.channel.ChannelInboundHandlerAdapter;
 import learn.cwb.common.transport.Msg;
 import learn.cwb.gateway.redis.RedisOps;
 import learn.cwb.gateway.redis.impl.RedisOpsImpl;
-import learn.cwb.gateway.system.SystemConstant;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

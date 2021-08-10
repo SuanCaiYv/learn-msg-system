@@ -1,4 +1,4 @@
-package learn.cwb.im.system;
+package learn.cwb.ns.system;
 
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.Channel;
@@ -10,11 +10,9 @@ import learn.cwb.common.codec.Byte2MsgCodec;
 import learn.cwb.common.handler.HeartbeatHandler;
 import learn.cwb.common.transport.Msg;
 import learn.cwb.common.util.NativeUtils;
-import learn.cwb.im.handler.ForwardHandler;
-import learn.cwb.im.handler.GlobalVariable;
-import learn.cwb.im.handler.InstantMsgHandler;
 import learn.cwb.common.zookeeper.ZookeeperOps;
 import learn.cwb.common.zookeeper.impl.ZookeeperOpsImpl;
+import learn.cwb.ns.handler.GlobalVariable;
 import org.apache.zookeeper.WatchedEvent;
 
 import java.util.HashSet;

@@ -2,6 +2,7 @@ package learn.cwb.im;
 
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.ChannelFuture;
+import io.netty.channel.ChannelFutureListener;
 import learn.cwb.common.util.NativeUtils;
 import learn.cwb.im.handler.ChildChannelPipelineInitializer;
 import learn.cwb.im.system.RunOnAppStart;
@@ -25,6 +26,16 @@ public class InstantMessageApplication {
                 .group(NativeUtils.bossEventLoopGroup(), NativeUtils.workerEventLoopGroup())
                 .childHandler(new ChildChannelPipelineInitializer())
                 .bind("127.0.0.1", SystemConstant.MY_PORT)
+                .addListener(new ChannelFutureListener() {
+                    @Override
+                    public void operationComplete(ChannelFuture future) throws Exception {
+                        if (future.isSuccess()) {
+                            LOGGER.info("服务器已绑定到: {}", "127.0.0.1:" + SystemConstant.MY_PORT);
+                        } else {
+                            LOGGER.error("服务器绑定{}失败", SystemConstant.MY_PORT);
+                        }
+                    }
+                })
                 .syncUninterruptibly();
         RunOnAppStart.hookAfterStart();
     }

@@ -13,6 +13,8 @@ import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
 import io.netty.channel.socket.nio.NioSocketChannel;
 import io.netty.util.NettyRuntime;
+import io.netty.util.concurrent.DefaultEventExecutorGroup;
+import io.netty.util.concurrent.EventExecutorGroup;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -20,6 +22,8 @@ import java.net.InetAddress;
 import java.net.NetworkInterface;
 import java.net.UnknownHostException;
 import java.util.Enumeration;
+import java.util.concurrent.*;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * @author CodeWithBuff(给代码来点Buff)
@@ -81,6 +85,40 @@ public class NativeUtils {
         } else {
             return NioSocketChannel.class;
         }
+    }
+
+    public static EventExecutorGroup defaultEventExecutorGroup() {
+        return new DefaultEventExecutorGroup(cpuNums, new ThreadFactory() {
+            final AtomicInteger index = new AtomicInteger(1);
+
+            @Override
+            public Thread newThread(Runnable runnable) {
+                Thread thread = new Thread(runnable);
+                thread.setName("Executor-" + index.getAndIncrement() + "-Only for I/O blocking operations");
+                return thread;
+            }
+        });
+    }
+
+    public static ExecutorService defaultExecutorService() {
+        final Logger LOGGER = LoggerFactory.getLogger("inner class from defaultExecutorService");
+        return new ThreadPoolExecutor(
+                Math.max(1, cpuNums >> 1),
+                cpuNums, 12,
+                TimeUnit.HOURS,
+                new LinkedBlockingDeque<>(1 << 30),
+                new ThreadFactory() {
+                    final AtomicInteger index = new AtomicInteger(1);
+
+                    @Override
+                    public Thread newThread(Runnable runnable) {
+                        Thread thread = new Thread(runnable);
+                        thread.setName("ThreadPool-" + index.getAndIncrement() + "-Only for I/O blocking operations");
+                        return thread;
+                    }
+                },
+                (r, executor) -> LOGGER.error("There are to much task to run! This shouldn't happen as design, please consider to expand your app's scale.")
+        );
     }
 
     public static String myIP() {

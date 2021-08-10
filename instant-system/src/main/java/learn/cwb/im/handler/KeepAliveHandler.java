@@ -5,8 +5,8 @@ import io.netty.handler.timeout.IdleStateEvent;
 import io.netty.util.AttributeKey;
 import learn.cwb.common.transport.Msg;
 import learn.cwb.common.util.NativeUtils;
-import learn.cwb.im.redis.RedisOps;
-import learn.cwb.im.redis.impl.RedisOpsImpl;
+import learn.cwb.common.redis.RedisOps;
+import learn.cwb.common.redis.impl.RedisOpsImpl;
 import learn.cwb.im.system.SystemConstant;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -102,19 +102,19 @@ public class KeepAliveHandler extends ChannelInboundHandlerAdapter {
         } else if (!heartbeatContinuation) {
             if (LOGGER.isDebugEnabled()) {
                 InetSocketAddress address = (InetSocketAddress) ctx.channel().remoteAddress();
-                LOGGER.debug("Channel({}) has receive a ping package and ack a pong package after {} try.", (address.getHostName() + ":" + address.getPort()), remainCount);
+                LOGGER.debug("Channel({})在第{}次尝试后收到了Pong包.", (address.getHostName() + ":" + address.getPort()), remainCount);
             }
             channel.attr(AttributeKey.valueOf(SystemConstant.HEARTBEAT_REMAIN_COUNT_NAME)).set(SystemConstant.HEARTBEAT_COUNT);
             channel.attr(AttributeKey.valueOf(SystemConstant.HEARTBEAT_CONTINUATION)).set(true);
         } else {
             if (LOGGER.isDebugEnabled()) {
                 InetSocketAddress address = (InetSocketAddress) ctx.channel().remoteAddress();
-                LOGGER.debug("Channel({}) has been offline, so we will close this Channel.", (address.getHostName() + ":" + address.getPort()));
+                LOGGER.debug("Channel({})下线了，所以我们决定关闭这个Channel.", (address.getHostName() + ":" + address.getPort()));
             }
             channelRmv(channel);
             channel.close().addListener((ChannelFutureListener) future -> {
                 InetSocketAddress address = (InetSocketAddress) ctx.channel().remoteAddress();
-                LOGGER.info("Channel({}) has been closed.", (address.getHostName() + ":" + address.getPort()));
+                LOGGER.info("Channel({})已被关闭.", (address.getHostName() + ":" + address.getPort()));
             });
         }
     }
