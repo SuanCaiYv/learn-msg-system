@@ -38,6 +38,7 @@ public class InstantMsgHandler extends ChannelInboundHandlerAdapter {
             LOGGER.info("对{}的请求转发到其他服务器处理", receiverId);
             ctx.fireChannelRead(msg0);
         } else {
+            System.out.println(receiverId);
             Channel userChannel = CHANNEL_MAP.get(receiverId);
             MsgRcd msgRcd = MsgRcd.withMsg(msg);
             // 存放到同步队列

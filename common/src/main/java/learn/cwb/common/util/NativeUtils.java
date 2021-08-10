@@ -86,7 +86,10 @@ public class NativeUtils {
     public static String myIP() {
         try {
             InetAddress localHost = InetAddress.getLocalHost();
-            return localHost.getHostAddress();
+            String address = "127.0.0.1";
+            // return localHost.getHostAddress();
+            // TODO 小BUG
+            return address;
         } catch (UnknownHostException e) {
             return null;
         }

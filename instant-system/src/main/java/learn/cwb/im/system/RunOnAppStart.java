@@ -40,11 +40,7 @@ public class RunOnAppStart {
 
     private static void registerWithZookeeper() {
         ZookeeperOps zookeeperOps = new ZookeeperOpsImpl();
-        InetAddress address = NativeUtils.getLocalHostExactAddress();
-        // TODO 有bug，找不到真实IP
-        String ipStr = "127.0.0.1";
-        assert address != null;
-        String myAddress = ipStr + ":" + SystemConstant.MY_PORT;
+        String myAddress = NativeUtils.myIP() + ":" + SystemConstant.MY_PORT;
         zookeeperOps.addTmpNode(SystemConstant.IM_NODE_PATH_PREFIX + "/" + myAddress);
     }
 
@@ -74,6 +70,7 @@ public class RunOnAppStart {
     }
 
     private static void setNode(String address) {
+        System.out.println("run" + address);
         String[] tmp = address.split(":");
         Bootstrap bootstrap = new Bootstrap();
         ChannelFuture channelFuture = bootstrap

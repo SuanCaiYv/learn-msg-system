@@ -39,7 +39,7 @@ public class KeepAliveHandler extends ChannelInboundHandlerAdapter {
         channelRmv(channel);
         channel.close().addListener((ChannelFutureListener) future -> {
             InetSocketAddress address = (InetSocketAddress) channel.remoteAddress();
-            LOGGER.info("Channel({}) has been closed.", (address.getHostName() + ":" + address.getPort()));
+            LOGGER.warn("Channel({})已被关闭.", (address.getHostName() + ":" + address.getPort()));
         });
     }
 
@@ -54,7 +54,7 @@ public class KeepAliveHandler extends ChannelInboundHandlerAdapter {
             case PONG -> {
                 if (LOGGER.isDebugEnabled()) {
                     InetSocketAddress address = (InetSocketAddress) channel.remoteAddress();
-                    LOGGER.debug("Channel({}) has send a pong package.", (address.getHostName() + ":" + address.getPort()));
+                    LOGGER.debug("Channel({})发送了一个Pong包.", (address.getHostName() + ":" + address.getPort()));
                 }
                 channel.attr(AttributeKey.valueOf(SystemConstant.HEARTBEAT_CONTINUATION)).set(false);
             }
@@ -68,7 +68,7 @@ public class KeepAliveHandler extends ChannelInboundHandlerAdapter {
                 channelRmv(channel);
                 channel.close().addListener((ChannelFutureListener) future -> {
                     InetSocketAddress address = (InetSocketAddress) channel.remoteAddress();
-                    LOGGER.info("Channel({}) wants to close.", (address.getHostName() + ":" + address.getPort()));
+                    LOGGER.warn("Channel({})想要关闭连接.", (address.getHostName() + ":" + address.getPort()));
                 });
             }
             default -> {
@@ -82,7 +82,7 @@ public class KeepAliveHandler extends ChannelInboundHandlerAdapter {
         if (evt instanceof IdleStateEvent) {
             if (LOGGER.isDebugEnabled()) {
                 InetSocketAddress address = (InetSocketAddress) ctx.channel().remoteAddress();
-                LOGGER.debug("Channel({}) has been so long time to no-active. So we want to send a heartbeat package.", (address.getHostName() + ":" + address.getPort()));
+                LOGGER.debug("Channel({})已经有一段时间没有活动了，我们想要发送一个心跳包进行探活.", (address.getHostName() + ":" + address.getPort()));
             }
             sendHeartbeatPackage(ctx);
         } else {
@@ -129,5 +129,6 @@ public class KeepAliveHandler extends ChannelInboundHandlerAdapter {
         long id = (long) channel.attr(AttributeKey.valueOf(SystemConstant.CHANNEL_IDENTIFIER)).get();
         GlobalVariable.CHANNEL_MAP.put(id, channel);
         REDIS_OPS.setObj(SystemConstant.USER_IN_CLUSTER_PREFIX + id, NativeUtils.myIP());
+        System.out.println(GlobalVariable.CHANNEL_MAP.get(id));
     }
 }

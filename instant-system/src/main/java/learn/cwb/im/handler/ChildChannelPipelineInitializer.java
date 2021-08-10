@@ -31,7 +31,7 @@ public class ChildChannelPipelineInitializer extends ChannelInitializer<Channel>
         pipeline.addLast("HeartbeatHandler", new HeartbeatHandler());
         pipeline.addLast("KeepAliveHandler", new KeepAliveHandler());
         pipeline.addLast("InstantMsgHandler", new InstantMsgHandler());
-        pipeline.addLast("ForwaedHandler", new ForwardHandler());
+        pipeline.addLast("ForwardHandler", new ForwardHandler());
         pipeline.addLast("ExceptionHandler", new ExceptionHandler());
     }
 }
