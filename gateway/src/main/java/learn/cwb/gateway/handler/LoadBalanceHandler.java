@@ -25,19 +25,15 @@ public class LoadBalanceHandler extends ChannelInboundHandlerAdapter {
         if (!msg.getHead().getType().equals(Msg.Head.Type.ESTABLISH)) {
             ctx.fireChannelRead(msg);
         } else {
-            long senderId = msg.getHead().getSenderId();
-            long tmp = senderId;
-            int mod = Math.min(GlobalVariable.SERVERS.size(), 17);
-            while (tmp >= GlobalVariable.SERVERS.size()) {
+            long tmp = msg.getHead().getSenderId();
+            int mod = Math.min(GlobalVariable.AVAILABLE_SERVERS.size(), 17);
+            while (tmp >= GlobalVariable.AVAILABLE_SERVERS.size()) {
                 tmp %= mod;
             }
-            System.out.println(tmp);
-            System.out.println(GlobalVariable.SERVERS.size());
             String address0 = "";
             // 负载均衡
-            for (String address : GlobalVariable.SERVERS.keySet()) {
+            for (String address : GlobalVariable.AVAILABLE_SERVERS) {
                 if (tmp == 0) {
-                    REDIS_OPS.setObj(SystemConstant.USER_IN_CLUSTER_PREFIX + senderId, address);
                     address0 = address;
                     break;
                 }
@@ -47,7 +43,7 @@ public class LoadBalanceHandler extends ChannelInboundHandlerAdapter {
             Msg.Head head = ans.getHead();
             head.setType(Msg.Head.Type.ESTABLISH);
             head.setCreatedTime(System.currentTimeMillis());
-            head.setSenderId(0);
+            head.setSenderId(Msg.Head.SERVER);
             head.setReceiverId(msg.getHead().getSenderId());
             head.setId(new long[] {0, 0});
             ctx.writeAndFlush(ans);

@@ -58,6 +58,11 @@ public class Msg {
 
             FILE(1 << 12),
 
+            /**
+             * 通知类型，不属于IM范畴，属于NS范畴
+             */
+            NOTIFICATION(1 << 13),
+
             NA(0);
 
             private final int mark;
@@ -85,10 +90,13 @@ public class Msg {
                     case 1 << 10 -> VOICE;
                     case 1 << 11 -> BASE64;
                     case 1 << 12 -> FILE;
+                    case 1 << 13 -> NOTIFICATION;
                     default -> NA;
                 };
             }
         }
+
+        public static final long SERVER = 0;
 
         private static final int AUTH_TOKEN_SIZE = 32;
 

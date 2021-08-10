@@ -32,18 +32,17 @@ public class InstantMsgHandler extends ChannelInboundHandlerAdapter {
     @Override
     public void channelRead(ChannelHandlerContext ctx, Object msg0) throws Exception {
         Msg msg = (Msg) msg0;
+        long senderId = msg.getHead().getSenderId();
         long receiverId = msg.getHead().getReceiverId();
-        // 接收者不在此服务器，或下线了
         if (!CHANNEL_MAP.containsKey(receiverId)) {
-            // 转发到网关查找
-            GlobalVariable.GATEWAY.writeAndFlush(msg);
+            LOGGER.info("对{}的请求转发到其他服务器处理", receiverId);
+            ctx.fireChannelRead(msg0);
         } else {
             Channel userChannel = CHANNEL_MAP.get(receiverId);
             MsgRcd msgRcd = MsgRcd.withMsg(msg);
             // 存放到同步队列
             // TODO 开启异步写入
             KAFKA_OPS.put(msgRcd.getQueueId(), msgRcd);
-            System.out.println("写入到" + receiverId);
             userChannel.writeAndFlush(msg);
         }
         // 设置用户收件箱

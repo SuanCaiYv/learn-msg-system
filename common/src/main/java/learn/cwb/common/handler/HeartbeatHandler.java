@@ -16,9 +16,6 @@ public class HeartbeatHandler extends ChannelInboundHandlerAdapter {
         if (msg.getHead().getType().equals(Msg.Head.Type.PING)) {
             Msg pong = Msg.withPong(msg.getHead().getReceiverId());
             ctx.writeAndFlush(pong);
-        } else if (msg.getHead().getType().equals(Msg.Head.Type.PONG)) {
-            Msg ping = Msg.withPing(msg.getHead().getReceiverId());
-            ctx.writeAndFlush(ping);
         } else {
             ctx.fireChannelRead(msg0);
         }

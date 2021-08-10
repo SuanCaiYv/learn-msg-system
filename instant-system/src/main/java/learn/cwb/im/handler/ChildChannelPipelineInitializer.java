@@ -5,6 +5,7 @@ import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelPipeline;
 import io.netty.handler.codec.LengthFieldBasedFrameDecoder;
 import io.netty.handler.timeout.IdleStateHandler;
+import learn.cwb.common.handler.HeartbeatHandler;
 import learn.cwb.common.transport.Msg;
 import learn.cwb.common.codec.Byte2MsgCodec;
 import learn.cwb.im.system.SystemConstant;
@@ -27,8 +28,10 @@ public class ChildChannelPipelineInitializer extends ChannelInitializer<Channel>
         pipeline.addLast("LengthBasedFrameDecoder", new LengthFieldBasedFrameDecoder(Integer.MAX_VALUE, 4, 8, Msg.Head.HEAD_SIZE - 12, 0));
         pipeline.addLast("ByteToMsgCodec", new Byte2MsgCodec());
         pipeline.addLast("IdleEventHandler", new IdleStateHandler(0, 0, SystemConstant.IDLE_TIME, TimeUnit.SECONDS));
+        pipeline.addLast("HeartbeatHandler", new HeartbeatHandler());
         pipeline.addLast("KeepAliveHandler", new KeepAliveHandler());
         pipeline.addLast("InstantMsgHandler", new InstantMsgHandler());
+        pipeline.addLast("ForwaedHandler", new ForwardHandler());
         pipeline.addLast("ExceptionHandler", new ExceptionHandler());
     }
 }

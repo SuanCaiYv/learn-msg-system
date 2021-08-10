@@ -12,5 +12,5 @@ import java.util.concurrent.ConcurrentHashMap;
 public class GlobalVariable {
     public static final ConcurrentHashMap<Long, Channel> CHANNEL_MAP = new ConcurrentHashMap<>();
 
-    public static Channel GATEWAY = null;
+    public static final ConcurrentHashMap<String, Channel> OTHER_SERVERS = new ConcurrentHashMap<>();
 }

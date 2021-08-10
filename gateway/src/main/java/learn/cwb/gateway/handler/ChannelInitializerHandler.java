@@ -21,6 +21,5 @@ public class ChannelInitializerHandler extends ChannelInitializer<Channel> {
         pipeline.addLast(new Byte2MsgCodec());
         pipeline.addLast("Heartbeat", new HeartbeatHandler());
         pipeline.addLast(new LoadBalanceHandler());
-        pipeline.addLast(new ForwardHandler());
     }
 }

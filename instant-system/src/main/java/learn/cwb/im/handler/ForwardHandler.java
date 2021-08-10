@@ -1,40 +1,40 @@
-package learn.cwb.gateway.handler;
+package learn.cwb.im.handler;
 
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
 import learn.cwb.common.transport.Msg;
-import learn.cwb.gateway.redis.RedisOps;
-import learn.cwb.gateway.redis.impl.RedisOpsImpl;
-import learn.cwb.gateway.system.SystemConstant;
+import learn.cwb.im.redis.RedisOps;
+import learn.cwb.im.redis.impl.RedisOpsImpl;
+import learn.cwb.im.system.SystemConstant;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * @author CodeWithBuff(给代码来点Buff)
- * @device iMacPro
- * @time 2021/8/8 8:49 下午
+ * @device MacBookPro
+ * @time 2021/8/10 13:59
  */
 public class ForwardHandler extends ChannelInboundHandlerAdapter {
+    private static final Logger LOGGER = LoggerFactory.getLogger(ForwardHandler.class);
+
     private static final RedisOps REDIS_OPS = new RedisOpsImpl();
+
+    private static final ConcurrentHashMap<String, Channel> OTHER_SERVERS = GlobalVariable.OTHER_SERVERS;
 
     @Override
     public void channelRead(ChannelHandlerContext ctx, Object msg0) throws Exception {
         Msg msg = (Msg) msg0;
+        long senderId = msg.getHead().getSenderId();
         long receiverId = msg.getHead().getReceiverId();
         String address = (String) REDIS_OPS.getObj(SystemConstant.USER_IN_CLUSTER_PREFIX + receiverId);
-        // 用户未上线
         if (address == null) {
-            ;
+            LOGGER.info("用户{}不在线", receiverId);
         } else {
-            Channel channel = GlobalVariable.SERVERS.get(address);
-            // 服务器宕机
-            if (channel == null) {
-                Msg err = Msg.withError();
-                Msg.Head head = err.getHead();
-                // TODO 错误处理
-                ctx.writeAndFlush(err);
-            } else {
-                channel.writeAndFlush(msg);
-            }
+            Channel userChannel = OTHER_SERVERS.get(address);
+            userChannel.writeAndFlush(msg);
         }
     }
 }

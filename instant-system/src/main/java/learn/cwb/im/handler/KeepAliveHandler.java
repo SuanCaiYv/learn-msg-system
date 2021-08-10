@@ -4,6 +4,7 @@ import io.netty.channel.*;
 import io.netty.handler.timeout.IdleStateEvent;
 import io.netty.util.AttributeKey;
 import learn.cwb.common.transport.Msg;
+import learn.cwb.common.util.NativeUtils;
 import learn.cwb.im.redis.RedisOps;
 import learn.cwb.im.redis.impl.RedisOpsImpl;
 import learn.cwb.im.system.SystemConstant;
@@ -34,9 +35,10 @@ public class KeepAliveHandler extends ChannelInboundHandlerAdapter {
 
     @Override
     public void channelInactive(ChannelHandlerContext ctx) throws Exception {
-        channelRmv(ctx.channel());
-        ctx.channel().close().addListener((ChannelFutureListener) future -> {
-            InetSocketAddress address = (InetSocketAddress) ctx.channel().remoteAddress();
+        Channel channel = ctx.channel();
+        channelRmv(channel);
+        channel.close().addListener((ChannelFutureListener) future -> {
+            InetSocketAddress address = (InetSocketAddress) channel.remoteAddress();
             LOGGER.info("Channel({}) has been closed.", (address.getHostName() + ":" + address.getPort()));
         });
     }
@@ -44,25 +46,28 @@ public class KeepAliveHandler extends ChannelInboundHandlerAdapter {
     @Override
     public void channelRead(ChannelHandlerContext ctx, Object msg0) throws Exception {
         Msg msg = (Msg) msg0;
+        long senderId = msg.getHead().getSenderId();
+        long receiverId = msg.getHead().getReceiverId();
+        Channel channel = ctx.channel();
         switch (msg.getHead().getType()) {
             // 对于心跳包的回复
             case PONG -> {
                 if (LOGGER.isDebugEnabled()) {
-                    InetSocketAddress address = (InetSocketAddress) ctx.channel().remoteAddress();
+                    InetSocketAddress address = (InetSocketAddress) channel.remoteAddress();
                     LOGGER.debug("Channel({}) has send a pong package.", (address.getHostName() + ":" + address.getPort()));
                 }
-                ctx.channel().attr(AttributeKey.valueOf(SystemConstant.HEARTBEAT_CONTINUATION)).set(false);
+                channel.attr(AttributeKey.valueOf(SystemConstant.HEARTBEAT_CONTINUATION)).set(false);
             }
             // 初始连接建立
             case ESTABLISH -> {
-                ctx.channel().attr(AttributeKey.valueOf(SystemConstant.CHANNEL_IDENTIFIER)).set(msg.getHead().getSenderId());
-                GlobalVariable.CHANNEL_MAP.put(msg.getHead().getSenderId(), ctx.channel());
+                channel.attr(AttributeKey.valueOf(SystemConstant.CHANNEL_IDENTIFIER)).set(senderId);
+                channelAdd(channel);
             }
             // 关闭连接
             case CLOSE -> {
-                channelRmv(ctx.channel());
-                ctx.channel().close().addListener((ChannelFutureListener) future -> {
-                    InetSocketAddress address = (InetSocketAddress) ctx.channel().remoteAddress();
+                channelRmv(channel);
+                channel.close().addListener((ChannelFutureListener) future -> {
+                    InetSocketAddress address = (InetSocketAddress) channel.remoteAddress();
                     LOGGER.info("Channel({}) wants to close.", (address.getHostName() + ":" + address.getPort()));
                 });
             }
@@ -77,7 +82,7 @@ public class KeepAliveHandler extends ChannelInboundHandlerAdapter {
         if (evt instanceof IdleStateEvent) {
             if (LOGGER.isDebugEnabled()) {
                 InetSocketAddress address = (InetSocketAddress) ctx.channel().remoteAddress();
-                LOGGER.debug("Channel({}) has been long time to no-active. So we want to send a heartbeat package.", (address.getHostName() + ":" + address.getPort()));
+                LOGGER.debug("Channel({}) has been so long time to no-active. So we want to send a heartbeat package.", (address.getHostName() + ":" + address.getPort()));
             }
             sendHeartbeatPackage(ctx);
         } else {
@@ -118,5 +123,11 @@ public class KeepAliveHandler extends ChannelInboundHandlerAdapter {
         long id = (long) channel.attr(AttributeKey.valueOf(SystemConstant.CHANNEL_IDENTIFIER)).get();
         GlobalVariable.CHANNEL_MAP.remove(id);
         REDIS_OPS.delObj(SystemConstant.USER_IN_CLUSTER_PREFIX + id);
+    }
+
+    private static void channelAdd(Channel channel) {
+        long id = (long) channel.attr(AttributeKey.valueOf(SystemConstant.CHANNEL_IDENTIFIER)).get();
+        GlobalVariable.CHANNEL_MAP.put(id, channel);
+        REDIS_OPS.setObj(SystemConstant.USER_IN_CLUSTER_PREFIX + id, NativeUtils.myIP());
     }
 }
