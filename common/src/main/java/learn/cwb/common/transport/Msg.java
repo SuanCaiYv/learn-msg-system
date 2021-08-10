@@ -205,10 +205,26 @@ public class Msg {
         return msg;
     }
 
+    public static Msg withPing(long senderId) {
+        Msg msg = withEmpty();
+        Head h = msg.head;
+        h.setType(Head.Type.PING);
+        h.setSenderId(senderId);
+        return msg;
+    }
+
     public static Msg withPong() {
         Msg msg = withEmpty();
         Head h = msg.head;
         h.setType(Head.Type.PONG);
+        return msg;
+    }
+
+    public static Msg withPong(long senderId) {
+        Msg msg = withEmpty();
+        Head h = msg.head;
+        h.setType(Head.Type.PONG);
+        h.setSenderId(senderId);
         return msg;
     }
 

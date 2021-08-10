@@ -7,6 +7,7 @@ import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelPipeline;
 import io.netty.handler.codec.LengthFieldBasedFrameDecoder;
 import learn.cwb.common.codec.Byte2MsgCodec;
+import learn.cwb.common.handler.HeartbeatHandler;
 import learn.cwb.common.transport.Msg;
 import learn.cwb.common.util.NativeUtils;
 import learn.cwb.gateway.handler.ForwardHandler;
@@ -65,6 +66,7 @@ public class RunOnAppStart {
                         ChannelPipeline pipeline = ch.pipeline();
                         pipeline.addLast("LengthBasedFrameDecoder", new LengthFieldBasedFrameDecoder(Integer.MAX_VALUE, 4, 8, Msg.Head.HEAD_SIZE - 12, 0));
                         pipeline.addLast("ByteToMsgCodec", new Byte2MsgCodec());
+                        pipeline.addLast("Heartbeat", new HeartbeatHandler());
                         pipeline.addLast("ForwardHandler", new ForwardHandler());
                     }
                 })

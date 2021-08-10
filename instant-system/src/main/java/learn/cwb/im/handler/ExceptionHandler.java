@@ -15,6 +15,7 @@ public class ExceptionHandler extends ChannelInboundHandlerAdapter {
 
     @Override
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
+        cause.printStackTrace();
         LOGGER.error("we have caught a exception: {}", cause.getMessage());
     }
 }

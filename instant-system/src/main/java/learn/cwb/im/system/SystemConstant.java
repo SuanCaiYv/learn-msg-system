@@ -8,9 +8,9 @@ package learn.cwb.im.system;
 public class SystemConstant {
     public static final int MY_PORT = 10422;
 
-    public static final long IDLE_TIME = 5;
+    public static final long IDLE_TIME = 120;
 
-    public static final long HEARTBEAT_INTERVAL = 1;
+    public static final long HEARTBEAT_INTERVAL = 10;
 
     public static final int HEARTBEAT_COUNT = 5;
 

@@ -27,9 +27,9 @@ public class KeepAliveHandler extends ChannelInboundHandlerAdapter {
 
     @Override
     public void channelActive(ChannelHandlerContext ctx) throws Exception {
-        ctx.channel().attr(AttributeKey.newInstance(SystemConstant.CHANNEL_IDENTIFIER)).set(-1L);
-        ctx.channel().attr(AttributeKey.newInstance(SystemConstant.HEARTBEAT_REMAIN_COUNT_NAME)).set(SystemConstant.HEARTBEAT_COUNT);
-        ctx.channel().attr(AttributeKey.newInstance(SystemConstant.HEARTBEAT_CONTINUATION)).set(true);
+        ctx.channel().attr(AttributeKey.valueOf(SystemConstant.CHANNEL_IDENTIFIER)).set(-1L);
+        ctx.channel().attr(AttributeKey.valueOf(SystemConstant.HEARTBEAT_REMAIN_COUNT_NAME)).set(SystemConstant.HEARTBEAT_COUNT);
+        ctx.channel().attr(AttributeKey.valueOf(SystemConstant.HEARTBEAT_CONTINUATION)).set(true);
     }
 
     @Override

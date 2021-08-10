@@ -4,6 +4,7 @@ import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.*;
 import io.netty.handler.codec.LengthFieldBasedFrameDecoder;
 import learn.cwb.common.codec.Byte2MsgCodec;
+import learn.cwb.common.handler.HeartbeatHandler;
 import learn.cwb.common.transport.Msg;
 import learn.cwb.common.util.NativeUtils;
 import org.slf4j.Logger;
@@ -72,6 +73,7 @@ public class Client {
                         ChannelPipeline pipeline = ch.pipeline();
                         pipeline.addLast(new LengthFieldBasedFrameDecoder(Integer.MAX_VALUE, 4, 8, Msg.EMPTY_SIZE - 12, 0));
                         pipeline.addLast(new Byte2MsgCodec());
+                        pipeline.addLast(new HeartbeatHandler());
                         pipeline.addLast(new ChannelInboundHandlerAdapter() {
                             @Override
                             public void channelRead(ChannelHandlerContext ctx, Object msg0) throws Exception {
