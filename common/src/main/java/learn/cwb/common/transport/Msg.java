@@ -3,6 +3,8 @@ package learn.cwb.common.transport;
 import io.netty.buffer.ByteBuf;
 import lombok.*;
 
+import java.nio.charset.StandardCharsets;
+
 /**
  * @author CodeWithBuff(给代码来点Buff)
  * @device MacBookPro
@@ -126,6 +128,10 @@ public class Msg {
     @NoArgsConstructor
     @AllArgsConstructor
     public static class Body {
+        public static final byte[] IM = "IM_ESTABLISH".getBytes();
+
+        public static final byte[] NS = "NS_ESTABLISH".getBytes();
+
         private byte[] body;
     }
 
@@ -203,6 +209,20 @@ public class Msg {
         msg.getHead().setType(Head.Type.ESTABLISH);
         msg.getHead().setSenderId(senderId);
         msg.getHead().setReceiverId(0);
+        return msg;
+    }
+
+    public static Msg withIMEstablish(long senderId) {
+        Msg msg = withEstablish(senderId);
+        msg.setBody(Body.builder().body(Body.IM).build());
+        msg.getHead().setSize(Body.IM.length);
+        return msg;
+    }
+
+    public static Msg withNSEstablish(long senderId) {
+        Msg msg = withEstablish(senderId);
+        msg.setBody(Body.builder().body(Body.NS).build());
+        msg.getHead().setSize(Body.NS.length);
         return msg;
     }
 

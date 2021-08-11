@@ -128,7 +128,7 @@ public class KeepAliveHandler extends ChannelInboundHandlerAdapter {
     private static void channelAdd(Channel channel) {
         long id = (long) channel.attr(AttributeKey.valueOf(SystemConstant.CHANNEL_IDENTIFIER)).get();
         GlobalVariable.CHANNEL_MAP.put(id, channel);
-        REDIS_OPS.setObj(SystemConstant.USER_IN_CLUSTER_PREFIX + id, NativeUtils.myIP());
+        REDIS_OPS.setObj(SystemConstant.USER_IN_CLUSTER_PREFIX + id, NativeUtils.myIP() + ":" + SystemConstant.MY_PORT);
         System.out.println(GlobalVariable.CHANNEL_MAP.get(id));
     }
 }

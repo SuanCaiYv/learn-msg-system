@@ -7,6 +7,8 @@ import learn.cwb.gateway.system.SystemConstant;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.Arrays;
+
 /**
  * @author CodeWithBuff(给代码来点Buff)
  * @device iMacPro
@@ -22,14 +24,15 @@ public class LoadBalanceHandler extends ChannelInboundHandlerAdapter {
             ctx.fireChannelRead(msg);
         } else {
             long senderId = msg.getHead().getSenderId();
-            String body = new String(msg.getBody().getBody());
-            int mod = GlobalVariable.AVAILABLE_IM_SERVERS.size();
-            while (senderId >= GlobalVariable.AVAILABLE_IM_SERVERS.size()) {
-                senderId %= mod;
-            }
+            byte[] body = msg.getBody().getBody();
             String address0 = "";
             // 负载均衡
-            if (body.equals(SystemConstant.IM_ESTABLISH)) {
+            if (Arrays.equals(body, Msg.Body.IM)) {
+                int mod = GlobalVariable.AVAILABLE_IM_SERVERS.size();
+                int size0 = GlobalVariable.AVAILABLE_IM_SERVERS.size();
+                while (senderId >= size0) {
+                    senderId %= mod;
+                }
                 for (String address : GlobalVariable.AVAILABLE_IM_SERVERS) {
                     if (senderId == 0) {
                         address0 = address;
@@ -37,7 +40,12 @@ public class LoadBalanceHandler extends ChannelInboundHandlerAdapter {
                     }
                     -- senderId;
                 }
-            } else if (body.equals(SystemConstant.NS_ESTABLISH)) {
+            } else if (Arrays.equals(body, Msg.Body.NS)) {
+                int mod = GlobalVariable.AVAILABLE_NS_SERVERS.size();
+                int size0 = GlobalVariable.AVAILABLE_NS_SERVERS.size();
+                while (senderId >= size0) {
+                    senderId %= mod;
+                }
                 for (String address : GlobalVariable.AVAILABLE_NS_SERVERS) {
                     if (senderId == 0) {
                         address0 = address;

@@ -6,7 +6,7 @@ package learn.cwb.im.system;
  * @time 2021/8/8 1:40 下午
  */
 public class SystemConstant {
-    public static final int MY_PORT = 10421;
+    public static final int MY_PORT = 10422;
 
     public static final long IDLE_TIME = 120;
 
@@ -24,5 +24,5 @@ public class SystemConstant {
 
     public static final String USER_INBOX_PREFIX = "USER_INBOX_";
 
-    public static final String IM_NODE_PATH_PREFIX = "/MSG/NS/NODE";
+    public static final String IM_NODE_PATH_PREFIX = "/MSG/IM/NODE";
 }

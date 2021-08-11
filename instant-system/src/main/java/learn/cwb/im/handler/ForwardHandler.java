@@ -33,7 +33,6 @@ public class ForwardHandler extends ChannelInboundHandlerAdapter {
         if (address == null) {
             LOGGER.info("用户{}不在线", receiverId);
         } else {
-            System.out.println(address);
             Channel userChannel = OTHER_SERVERS.get(address);
             userChannel.writeAndFlush(msg);
         }

@@ -69,7 +69,6 @@ public class RunOnAppStart {
     }
 
     private static void setNode(String address) {
-        System.out.println("run" + address);
         String[] tmp = address.split(":");
         Bootstrap bootstrap = new Bootstrap();
         ChannelFuture channelFuture = bootstrap

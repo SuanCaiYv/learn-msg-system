@@ -8,6 +8,7 @@
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
         <module name="instant-system" />
+        <module name="mock" />
         <module name="external" />
         <module name="notification-system" />
         <module name="common" />

@@ -3,7 +3,7 @@ package learn.cwb.gateway;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.ChannelFuture;
 import learn.cwb.common.util.NativeUtils;
-import learn.cwb.gateway.handler.ChannelInitializerHandler;
+import learn.cwb.gateway.handler.ChildChannelPipelineInitializer;
 import learn.cwb.gateway.system.RunOnAppStart;
 import learn.cwb.gateway.system.SystemConstant;
 import org.slf4j.Logger;
@@ -23,7 +23,7 @@ public class GatewayApplication {
         ChannelFuture channelFuture = serverBootstrap
                 .channel(NativeUtils.serverChannel())
                 .group(NativeUtils.bossEventLoopGroup(), NativeUtils.workerEventLoopGroup())
-                .childHandler(new ChannelInitializerHandler())
+                .childHandler(new ChildChannelPipelineInitializer())
                 .bind("127.0.0.1", SystemConstant.MY_PORT)
                 .syncUninterruptibly();
     }

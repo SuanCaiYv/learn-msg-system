@@ -11,8 +11,4 @@ public class SystemConstant {
     public static final String IM_NODE_PATH_PREFIX = "/MSG/IM/NODE";
 
     public static final String NS_NODE_PATH_PREFIX = "/MSG/NS/NODE";
-
-    public static final String IM_ESTABLISH = "IM_ESTABLISH";
-
-    public static final String NS_ESTABLISH = "NS_ESTABLISH";
 }

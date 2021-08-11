@@ -26,14 +26,11 @@ public class InstantMessageApplication {
                 .group(NativeUtils.bossEventLoopGroup(), NativeUtils.workerEventLoopGroup())
                 .childHandler(new ChildChannelPipelineInitializer())
                 .bind("127.0.0.1", SystemConstant.MY_PORT)
-                .addListener(new ChannelFutureListener() {
-                    @Override
-                    public void operationComplete(ChannelFuture future) throws Exception {
-                        if (future.isSuccess()) {
-                            LOGGER.info("服务器已绑定到: {}", "127.0.0.1:" + SystemConstant.MY_PORT);
-                        } else {
-                            LOGGER.error("服务器绑定{}失败", SystemConstant.MY_PORT);
-                        }
+                .addListener((ChannelFutureListener) future -> {
+                    if (future.isSuccess()) {
+                        LOGGER.info("服务器已绑定到: {}", "127.0.0.1:" + SystemConstant.MY_PORT);
+                    } else {
+                        LOGGER.error("服务器绑定{}失败", SystemConstant.MY_PORT);
                     }
                 })
                 .syncUninterruptibly();
