@@ -1,8 +1,8 @@
 package learn.cwb.gateway.system;
 
+import learn.cwb.common.zookeeper.ZookeeperOps;
+import learn.cwb.common.zookeeper.impl.ZookeeperOpsImpl;
 import learn.cwb.gateway.handler.GlobalVariable;
-import learn.cwb.gateway.zookeeper.ZookeeperOps;
-import learn.cwb.gateway.zookeeper.impl.ZookeeperOpsImpl;
 import org.apache.zookeeper.WatchedEvent;
 
 import java.util.HashSet;
@@ -23,13 +23,21 @@ public class RunOnAppStart {
 
     private static void refreshAvailableNodes() {
         ZookeeperOps zookeeperOps = new ZookeeperOpsImpl();
-        List<String> nodes = zookeeperOps.getChild(SystemConstant.IM_NODE_PATH_PREFIX, RunOnAppStart::watchedEvents);
-        GlobalVariable.AVAILABLE_SERVERS.addAll(nodes);
+        List<String> nodes1 = zookeeperOps.getChild(SystemConstant.IM_NODE_PATH_PREFIX, RunOnAppStart::watchedIMEvents);
+        GlobalVariable.AVAILABLE_IM_SERVERS.addAll(nodes1);
+        List<String> nodes2 = zookeeperOps.getChild(SystemConstant.NS_NODE_PATH_PREFIX, RunOnAppStart::watchedNSEvents);
+        GlobalVariable.AVAILABLE_NS_SERVERS.addAll(nodes2);
     }
 
-    private static void watchedEvents(WatchedEvent event) {
-        Set<String> now = new HashSet<>(ZOOKEEPER_OPS.getChild(SystemConstant.IM_NODE_PATH_PREFIX, RunOnAppStart::watchedEvents));
-        GlobalVariable.AVAILABLE_SERVERS.removeIf(address -> !now.contains(address));
-        GlobalVariable.AVAILABLE_SERVERS.addAll(now);
+    private static void watchedIMEvents(WatchedEvent event) {
+        Set<String> now = new HashSet<>(ZOOKEEPER_OPS.getChild(SystemConstant.IM_NODE_PATH_PREFIX, RunOnAppStart::watchedIMEvents));
+        GlobalVariable.AVAILABLE_IM_SERVERS.removeIf(address -> !now.contains(address));
+        GlobalVariable.AVAILABLE_IM_SERVERS.addAll(now);
+    }
+
+    private static void watchedNSEvents(WatchedEvent event) {
+        Set<String> now = new HashSet<>(ZOOKEEPER_OPS.getChild(SystemConstant.NS_NODE_PATH_PREFIX, RunOnAppStart::watchedNSEvents));
+        GlobalVariable.AVAILABLE_NS_SERVERS.removeIf(address -> !now.contains(address));
+        GlobalVariable.AVAILABLE_NS_SERVERS.addAll(now);
     }
 }

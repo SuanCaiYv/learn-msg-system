@@ -8,5 +8,7 @@ import java.util.TreeSet;
  * @time 2021/8/8 8:51 下午
  */
 public class GlobalVariable {
-    public static final TreeSet<String> AVAILABLE_SERVERS = new TreeSet<>();
+    public static final TreeSet<String> AVAILABLE_IM_SERVERS = new TreeSet<>();
+
+    public static final TreeSet<String> AVAILABLE_NS_SERVERS = new TreeSet<>();
 }

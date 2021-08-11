@@ -1,5 +1,6 @@
-package learn.cwb.common.kafka;
+package learn.cwb.common.kafka.impl;
 
+import learn.cwb.common.kafka.KafkaOps;
 import learn.cwb.common.system.SystemConstant;
 import learn.cwb.common.transport.MsgRcd;
 import learn.cwb.common.config.KafKaConfig;

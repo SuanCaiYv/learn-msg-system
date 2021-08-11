@@ -82,7 +82,7 @@ public class RunOnAppStart {
                         pipeline.addLast("LengthBasedFrameDecoder", new LengthFieldBasedFrameDecoder(Integer.MAX_VALUE, 4, 8, Msg.Head.HEAD_SIZE - 12, 0));
                         pipeline.addLast("ByteToMsgCodec", new Byte2MsgCodec());
                         pipeline.addLast("HeartbeatHandler", new HeartbeatHandler());
-                        pipeline.addLast("ForwardHandler", new InstantMsgHandler());
+                        pipeline.addLast("DirectHandler", new InstantMsgHandler());
                         pipeline.addLast("MaybeError", new ForwardHandler());
                     }
                 })

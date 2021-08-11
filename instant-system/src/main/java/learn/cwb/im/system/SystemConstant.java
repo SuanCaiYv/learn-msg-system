@@ -20,11 +20,9 @@ public class SystemConstant {
 
     public static final String CHANNEL_IDENTIFIER = "SENDER_ID";
 
-    public static final String USER_IN_CLUSTER_PREFIX = "USER_IN_CLUSTER_";
+    public static final String USER_IN_CLUSTER_PREFIX = "USER_IM_IN_CLUSTER_";
 
     public static final String USER_INBOX_PREFIX = "USER_INBOX_";
 
-    public static final String IM_NODE_PATH_PREFIX = "/MSG/IM/NODE";
-
-    public static final String KAFKA_TOPIC = "msg-dev";
+    public static final String IM_NODE_PATH_PREFIX = "/MSG/NS/NODE";
 }

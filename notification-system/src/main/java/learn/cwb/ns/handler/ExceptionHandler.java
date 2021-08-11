@@ -1,5 +1,6 @@
 package learn.cwb.ns.handler;
 
+import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
 
 /**
@@ -8,4 +9,8 @@ import io.netty.channel.ChannelInboundHandlerAdapter;
  * @time 2021/8/10 9:16 下午
  */
 public class ExceptionHandler extends ChannelInboundHandlerAdapter {
+    @Override
+    public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
+        cause.printStackTrace();
+    }
 }

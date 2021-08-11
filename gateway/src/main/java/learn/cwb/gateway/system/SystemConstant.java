@@ -8,7 +8,11 @@ package learn.cwb.gateway.system;
 public class SystemConstant {
     public static final int MY_PORT = 10410;
 
-    public static final String USER_IN_CLUSTER_PREFIX = "USER_IN_CLUSTER_";
-
     public static final String IM_NODE_PATH_PREFIX = "/MSG/IM/NODE";
+
+    public static final String NS_NODE_PATH_PREFIX = "/MSG/NS/NODE";
+
+    public static final String IM_ESTABLISH = "IM_ESTABLISH";
+
+    public static final String NS_ESTABLISH = "NS_ESTABLISH";
 }

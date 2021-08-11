@@ -6,7 +6,7 @@ import io.netty.channel.ChannelInboundHandlerAdapter;
 import learn.cwb.common.transport.Msg;
 import learn.cwb.common.transport.MsgRcd;
 import learn.cwb.common.kafka.KafkaOps;
-import learn.cwb.common.kafka.KafkaOpsImpl;
+import learn.cwb.common.kafka.impl.KafkaOpsImpl;
 import learn.cwb.common.redis.RedisOps;
 import learn.cwb.common.redis.impl.RedisOpsImpl;
 import learn.cwb.im.system.SystemConstant;
@@ -30,7 +30,7 @@ public class InstantMsgHandler extends ChannelInboundHandlerAdapter {
     private static final KafkaOps KAFKA_OPS = new KafkaOpsImpl();
 
     @Override
-    public void channelRead(ChannelHandlerContext ctx, Object msg0) throws Exception {
+    public void channelRead(ChannelHandlerContext ctx, Object msg0) {
         Msg msg = (Msg) msg0;
         long senderId = msg.getHead().getSenderId();
         long receiverId = msg.getHead().getReceiverId();
@@ -38,7 +38,6 @@ public class InstantMsgHandler extends ChannelInboundHandlerAdapter {
             LOGGER.info("对{}的请求转发到其他服务器处理", receiverId);
             ctx.fireChannelRead(msg0);
         } else {
-            System.out.println(receiverId);
             Channel userChannel = CHANNEL_MAP.get(receiverId);
             MsgRcd msgRcd = MsgRcd.withMsg(msg);
             // 存放到同步队列

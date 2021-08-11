@@ -207,10 +207,7 @@ public class Msg {
     }
 
     public static Msg withPing() {
-        Msg msg = withEmpty();
-        Head h = msg.head;
-        h.setType(Head.Type.PING);
-        return msg;
+        return withPing(Head.SERVER);
     }
 
     public static Msg withPing(long senderId) {
@@ -240,6 +237,7 @@ public class Msg {
         Msg msg = withEmpty();
         Head h = msg.head;
         h.setType(Head.Type.ERROR);
+        h.setSenderId(Head.SERVER);
         return msg;
     }
 

@@ -26,5 +26,8 @@ public class ChannelInitializerHandler extends ChannelInitializer<Channel> {
         pipeline.addLast(new IdleStateHandler(0, 0, SystemConstant.IDLE_TIME, TimeUnit.HOURS));
         pipeline.addLast(new HeartbeatHandler());
         pipeline.addLast(new KeepAliveHandler());
+        pipeline.addLast(new NotificationHandler());
+        pipeline.addLast(new ForwardHandler());
+        pipeline.addLast(new ExceptionHandler());
     }
 }

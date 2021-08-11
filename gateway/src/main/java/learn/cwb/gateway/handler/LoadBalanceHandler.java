@@ -2,9 +2,10 @@ package learn.cwb.gateway.handler;
 
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
+import learn.cwb.common.redis.RedisOps;
+import learn.cwb.common.redis.impl.RedisOpsImpl;
 import learn.cwb.common.transport.Msg;
-import learn.cwb.gateway.redis.RedisOps;
-import learn.cwb.gateway.redis.impl.RedisOpsImpl;
+import learn.cwb.gateway.system.SystemConstant;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -24,19 +25,33 @@ public class LoadBalanceHandler extends ChannelInboundHandlerAdapter {
         if (!msg.getHead().getType().equals(Msg.Head.Type.ESTABLISH)) {
             ctx.fireChannelRead(msg);
         } else {
-            long tmp = msg.getHead().getSenderId();
-            int mod = Math.min(GlobalVariable.AVAILABLE_SERVERS.size(), 17);
-            while (tmp >= GlobalVariable.AVAILABLE_SERVERS.size()) {
-                tmp %= mod;
+            long senderId = msg.getHead().getSenderId();
+            String body = new String(msg.getBody().getBody());
+            int mod = Math.min(GlobalVariable.AVAILABLE_IM_SERVERS.size(), 17);
+            while (senderId >= GlobalVariable.AVAILABLE_IM_SERVERS.size()) {
+                senderId %= mod;
             }
             String address0 = "";
             // 负载均衡
-            for (String address : GlobalVariable.AVAILABLE_SERVERS) {
-                if (tmp == 0) {
-                    address0 = address;
-                    break;
+            if (body.equals(SystemConstant.IM_ESTABLISH)) {
+                for (String address : GlobalVariable.AVAILABLE_IM_SERVERS) {
+                    if (senderId == 0) {
+                        address0 = address;
+                        break;
+                    }
+                    -- senderId;
                 }
-                -- tmp;
+            } else if (body.equals(SystemConstant.NS_ESTABLISH)) {
+                for (String address : GlobalVariable.AVAILABLE_NS_SERVERS) {
+                    if (senderId == 0) {
+                        address0 = address;
+                        break;
+                    }
+                    -- senderId;
+                }
+            } else {
+                ctx.writeAndFlush(Msg.withError());
+                return ;
             }
             Msg ans = Msg.withText(address0);
             Msg.Head head = ans.getHead();

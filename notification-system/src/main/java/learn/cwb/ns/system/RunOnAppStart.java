@@ -12,7 +12,9 @@ import learn.cwb.common.transport.Msg;
 import learn.cwb.common.util.NativeUtils;
 import learn.cwb.common.zookeeper.ZookeeperOps;
 import learn.cwb.common.zookeeper.impl.ZookeeperOpsImpl;
+import learn.cwb.ns.handler.ForwardHandler;
 import learn.cwb.ns.handler.GlobalVariable;
+import learn.cwb.ns.handler.NotificationHandler;
 import org.apache.zookeeper.WatchedEvent;
 
 import java.util.HashSet;
@@ -38,19 +40,19 @@ public class RunOnAppStart {
     private static void registerWithZookeeper() {
         ZookeeperOps zookeeperOps = new ZookeeperOpsImpl();
         String myAddress = NativeUtils.myIP() + ":" + SystemConstant.MY_PORT;
-        zookeeperOps.addTmpNode(SystemConstant.IM_NODE_PATH_PREFIX + "/" + myAddress);
+        zookeeperOps.addTmpNode(SystemConstant.NS_NODE_PATH_PREFIX + "/" + myAddress);
     }
 
     private static void refreshAvailableNodes() {
         ZookeeperOps zookeeperOps = new ZookeeperOpsImpl();
-        List<String> nodes = zookeeperOps.getChild(SystemConstant.IM_NODE_PATH_PREFIX, RunOnAppStart::watchedEvents);
+        List<String> nodes = zookeeperOps.getChild(SystemConstant.NS_NODE_PATH_PREFIX, RunOnAppStart::watchedEvents);
         for (String address : nodes) {
             setNode(address);
         }
     }
 
     private static void watchedEvents(WatchedEvent event) {
-        Set<String> now = new HashSet<>(ZOOKEEPER_OPS.getChild(SystemConstant.IM_NODE_PATH_PREFIX, RunOnAppStart::watchedEvents));
+        Set<String> now = new HashSet<>(ZOOKEEPER_OPS.getChild(SystemConstant.NS_NODE_PATH_PREFIX, RunOnAppStart::watchedEvents));
         for (String address : GlobalVariable.OTHER_SERVERS.keySet()) {
             if (!now.contains(address)) {
                 delNode(address);
@@ -80,7 +82,7 @@ public class RunOnAppStart {
                         pipeline.addLast("LengthBasedFrameDecoder", new LengthFieldBasedFrameDecoder(Integer.MAX_VALUE, 4, 8, Msg.Head.HEAD_SIZE - 12, 0));
                         pipeline.addLast("ByteToMsgCodec", new Byte2MsgCodec());
                         pipeline.addLast("HeartbeatHandler", new HeartbeatHandler());
-                        pipeline.addLast("ForwardHandler", new InstantMsgHandler());
+                        pipeline.addLast("ForwardHandler", new NotificationHandler());
                         pipeline.addLast("MaybeError", new ForwardHandler());
                     }
                 })
