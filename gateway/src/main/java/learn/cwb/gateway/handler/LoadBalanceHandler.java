@@ -2,8 +2,6 @@ package learn.cwb.gateway.handler;
 
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
-import learn.cwb.common.redis.RedisOps;
-import learn.cwb.common.redis.impl.RedisOpsImpl;
 import learn.cwb.common.transport.Msg;
 import learn.cwb.gateway.system.SystemConstant;
 import org.slf4j.Logger;
@@ -16,8 +14,6 @@ import org.slf4j.LoggerFactory;
  */
 public class LoadBalanceHandler extends ChannelInboundHandlerAdapter {
     private static final Logger LOGGER = LoggerFactory.getLogger(LoadBalanceHandler.class);
-
-    private static final RedisOps REDIS_OPS = new RedisOpsImpl();
 
     @Override
     public void channelRead(ChannelHandlerContext ctx, Object msg0) throws Exception {
