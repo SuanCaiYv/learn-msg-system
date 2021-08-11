@@ -23,7 +23,7 @@ public class LoadBalanceHandler extends ChannelInboundHandlerAdapter {
         } else {
             long senderId = msg.getHead().getSenderId();
             String body = new String(msg.getBody().getBody());
-            int mod = Math.min(GlobalVariable.AVAILABLE_IM_SERVERS.size(), 17);
+            int mod = GlobalVariable.AVAILABLE_IM_SERVERS.size();
             while (senderId >= GlobalVariable.AVAILABLE_IM_SERVERS.size()) {
                 senderId %= mod;
             }
