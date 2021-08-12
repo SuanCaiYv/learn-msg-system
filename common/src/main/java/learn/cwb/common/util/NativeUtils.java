@@ -88,7 +88,7 @@ public class NativeUtils {
     }
 
     public static EventExecutorGroup defaultEventExecutorGroup() {
-        return new DefaultEventExecutorGroup(cpuNums, new ThreadFactory() {
+        return new DefaultEventExecutorGroup(cpuNums << 2, new ThreadFactory() {
             final AtomicInteger index = new AtomicInteger(1);
 
             @Override
@@ -103,8 +103,8 @@ public class NativeUtils {
     public static ExecutorService defaultExecutorService() {
         final Logger LOGGER = LoggerFactory.getLogger("inner class from defaultExecutorService");
         return new ThreadPoolExecutor(
-                Math.max(1, cpuNums >> 1),
-                cpuNums, 12,
+                cpuNums,
+                cpuNums << 2, 12,
                 TimeUnit.HOURS,
                 new LinkedBlockingDeque<>(1 << 30),
                 new ThreadFactory() {

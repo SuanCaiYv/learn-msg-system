@@ -27,7 +27,7 @@ public class ChildChannelInitializer extends ChannelInitializer<Channel> {
         pipeline.addLast(new HeartbeatHandler());
         pipeline.addLast(new KeepAliveHandler());
         pipeline.addLast(new NotificationHandler());
-        pipeline.addLast(new ForwardHandler());
+        pipeline.addLast(GlobalVariable.EVENT_EXECUTOR_GROUP, new ForwardHandler());
         pipeline.addLast(new ExceptionHandler());
     }
 }

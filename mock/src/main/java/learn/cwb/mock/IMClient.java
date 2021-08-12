@@ -10,6 +10,7 @@ import learn.cwb.common.util.NativeUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.net.InetSocketAddress;
 import java.util.Scanner;
 import java.util.concurrent.locks.LockSupport;
 
@@ -45,6 +46,18 @@ public class IMClient {
         }
     }
 
+    static class Client5 {
+        public static void main(String[] args) {
+            work(5, 4);
+        }
+    }
+
+    static class Client6 {
+        public static void main(String[] args) {
+            work(6, 2);
+        }
+    }
+
     private static void work(long senderId, long receiverId) {
         String address = connect(senderId);
         LOGGER.info("连接到: {}服务器", address);
@@ -65,7 +78,7 @@ public class IMClient {
                             public void channelRead(ChannelHandlerContext ctx, Object msg0) throws Exception {
                                 Msg msg = (Msg) msg0 ;
                                 if (msg.getHead().getType().equals(Msg.Head.Type.TEXT)) {
-                                    LOGGER.info("用户: 👉{}👈从🥦{}🍋读到了: 😋{}", msg.getHead().getReceiverId(), msg.getHead().getSenderId(), new String(msg.getBody().getBody()));
+                                    LOGGER.info("用户: 👉{}👈从👉{}👈读到了: {}", msg.getHead().getReceiverId(), msg.getHead().getSenderId(), new String(msg.getBody().getBody()));
                                 }
                             }
                         });
@@ -74,6 +87,7 @@ public class IMClient {
                 .connect(tmp[0], Integer.parseInt(tmp[1]))
                 .syncUninterruptibly();
         Channel channel = channelFuture.channel();
+        LOGGER.info("我是{}", ((InetSocketAddress) channel.localAddress()).getPort());
         Msg establishMsg = Msg.withIMEstablish(senderId);
         channel.writeAndFlush(establishMsg);
         Scanner scanner = new Scanner(System.in);

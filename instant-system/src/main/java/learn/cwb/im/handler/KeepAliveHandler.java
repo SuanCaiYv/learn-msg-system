@@ -12,6 +12,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.net.InetSocketAddress;
+import java.util.concurrent.ExecutorService;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -21,6 +22,8 @@ import java.util.concurrent.TimeUnit;
  */
 public class KeepAliveHandler extends ChannelInboundHandlerAdapter {
     private static final Logger LOGGER = LoggerFactory.getLogger(KeepAliveHandler.class);
+
+    private static final ExecutorService THREAD_POOL = GlobalVariable.THREAD_POOL;
 
     private static final Msg HEARTBEAT_PACKAGE = Msg.withPing();
 
@@ -122,13 +125,16 @@ public class KeepAliveHandler extends ChannelInboundHandlerAdapter {
     private static void channelRmv(Channel channel) {
         long id = (long) channel.attr(AttributeKey.valueOf(SystemConstant.CHANNEL_IDENTIFIER)).get();
         GlobalVariable.CHANNEL_MAP.remove(id);
-        REDIS_OPS.delObj(SystemConstant.USER_IN_CLUSTER_PREFIX + id);
+        THREAD_POOL.execute(() -> {
+            REDIS_OPS.delObj(SystemConstant.USER_IN_IM_CLUSTER_PREFIX + id);
+        });
     }
 
     private static void channelAdd(Channel channel) {
         long id = (long) channel.attr(AttributeKey.valueOf(SystemConstant.CHANNEL_IDENTIFIER)).get();
         GlobalVariable.CHANNEL_MAP.put(id, channel);
-        REDIS_OPS.setObj(SystemConstant.USER_IN_CLUSTER_PREFIX + id, NativeUtils.myAddress(SystemConstant.MY_PORT));
-        System.out.println(GlobalVariable.CHANNEL_MAP.get(id));
+        THREAD_POOL.execute(() -> {
+            REDIS_OPS.setObj(SystemConstant.USER_IN_IM_CLUSTER_PREFIX + id, NativeUtils.myAddress(SystemConstant.MY_PORT));
+        });
     }
 }

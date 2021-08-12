@@ -5,6 +5,7 @@ import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelFutureListener;
 import learn.cwb.common.util.NativeUtils;
 import learn.cwb.im.handler.ChildChannelPipelineInitializer;
+import learn.cwb.im.handler.GlobalVariable;
 import learn.cwb.im.system.RunOnAppStart;
 import learn.cwb.im.system.SystemConstant;
 import org.slf4j.Logger;
@@ -19,6 +20,9 @@ public class InstantMessageApplication {
     private static final Logger LOGGER = LoggerFactory.getLogger(InstantMessageApplication.class);
 
     public static void main(String[] args) {
+        if (args.length != 0) {
+            GlobalVariable.PORT = Integer.parseInt(args[0]);
+        }
         RunOnAppStart.hookBeforeStart();
         ServerBootstrap serverBootstrap = new ServerBootstrap();
         ChannelFuture channelFuture = serverBootstrap

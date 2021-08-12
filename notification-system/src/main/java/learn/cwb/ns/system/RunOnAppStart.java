@@ -8,6 +8,8 @@ import io.netty.channel.ChannelPipeline;
 import io.netty.handler.codec.LengthFieldBasedFrameDecoder;
 import learn.cwb.common.codec.Byte2MsgCodec;
 import learn.cwb.common.handler.HeartbeatHandler;
+import learn.cwb.common.redis.RedisOps;
+import learn.cwb.common.redis.impl.RedisOpsImpl;
 import learn.cwb.common.transport.Msg;
 import learn.cwb.common.util.NativeUtils;
 import learn.cwb.common.zookeeper.ZookeeperOps;
@@ -28,6 +30,8 @@ import java.util.Set;
  */
 public class RunOnAppStart {
     private static final ZookeeperOps ZOOKEEPER_OPS = new ZookeeperOpsImpl();
+
+    private static final RedisOps REDIS_OPS = new RedisOpsImpl();
 
     public static void hookBeforeStart() {
         refreshAvailableNodes();
@@ -87,7 +91,9 @@ public class RunOnAppStart {
                 })
                 .connect(tmp[0], Integer.parseInt(tmp[1]))
                 .syncUninterruptibly();
-        GlobalVariable.OTHER_SERVERS.put(address, channelFuture.channel());
+        Channel channel = channelFuture.channel();
+        channel.writeAndFlush(Msg.withEstablish(-REDIS_OPS.getAutoIncrementId()));
+        GlobalVariable.OTHER_SERVERS.put(address, channel);
     }
 
     private static void delNode(String address) {

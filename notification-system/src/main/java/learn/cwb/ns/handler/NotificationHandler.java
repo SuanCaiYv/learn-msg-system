@@ -24,11 +24,15 @@ public class NotificationHandler extends ChannelInboundHandlerAdapter {
         Msg msg = (Msg) msg0;
         long senderId = msg.getHead().getSenderId();
         long receiverId = msg.getHead().getReceiverId();
-        if (!CHANNEL_MAP.containsKey(receiverId)) {
+        // 全局通知
+        if (receiverId < 0) {
+            CHANNEL_MAP.entrySet().stream()
+                    .filter(e -> e.getKey() > 0)
+                    .forEach(e -> e.getValue().writeAndFlush(msg));
+        } else if (!CHANNEL_MAP.containsKey(receiverId)) {
             LOGGER.info("对{}的请求转发到其他服务器处理", receiverId);
             ctx.fireChannelRead(msg0);
         } else {
-            System.out.println(receiverId);
             Channel userChannel = CHANNEL_MAP.get(receiverId);
             userChannel.writeAndFlush(msg);
         }

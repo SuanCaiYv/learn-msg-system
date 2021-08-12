@@ -29,11 +29,10 @@ public class ForwardHandler extends ChannelInboundHandlerAdapter {
         Msg msg = (Msg) msg0;
         long senderId = msg.getHead().getSenderId();
         long receiverId = msg.getHead().getReceiverId();
-        String address = (String) REDIS_OPS.getObj(SystemConstant.USER_IN_CLUSTER_PREFIX + receiverId);
+        String address = (String) REDIS_OPS.getObj(SystemConstant.USER_IN_NS_CLUSTER_PREFIX + receiverId);
         if (address == null) {
             LOGGER.info("用户{}不在线", receiverId);
         } else {
-            System.out.println(address);
             Channel userChannel = OTHER_SERVERS.get(address);
             userChannel.writeAndFlush(msg);
         }

@@ -4,6 +4,7 @@ import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.ChannelFuture;
 import learn.cwb.common.util.NativeUtils;
 import learn.cwb.ns.handler.ChildChannelInitializer;
+import learn.cwb.ns.handler.GlobalVariable;
 import learn.cwb.ns.system.RunOnAppStart;
 import learn.cwb.ns.system.SystemConstant;
 
@@ -15,6 +16,9 @@ import learn.cwb.ns.system.SystemConstant;
 public class NotificationApplication {
 
     public static void main(String[] args) {
+        if (args.length != 0) {
+            GlobalVariable.PORT = Integer.parseInt(args[0]);
+        }
         RunOnAppStart.hookBeforeStart();
         ServerBootstrap serverBootstrap = new ServerBootstrap();
         ChannelFuture channelFuture = serverBootstrap

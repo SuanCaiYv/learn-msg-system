@@ -31,7 +31,9 @@ public class ChildChannelPipelineInitializer extends ChannelInitializer<Channel>
         pipeline.addLast("HeartbeatHandler", new HeartbeatHandler());
         pipeline.addLast("KeepAliveHandler", new KeepAliveHandler());
         pipeline.addLast("InstantMsgHandler", new InstantMsgHandler());
-        pipeline.addLast("ForwardHandler", new ForwardHandler());
+        // 这里稍微切换了一下执行上下文，前面采用线程池是因为内部调用时间可控，前面含外部调用，时间不可控，或者我自己不确定
+        // 所以为了减少Netty的EventExecutorGroup的压力，而且我希望I/O操作得益于NIO+事件驱动，尽可能保留在EventLoop去执行
+        pipeline.addLast(GlobalVariable.EVENT_EXECUTOR_GROUP, "ForwardHandler", new ForwardHandler());
         pipeline.addLast("ExceptionHandler", new ExceptionHandler());
     }
 }

@@ -44,4 +44,6 @@ public interface RedisOps {
     List<Object> getZSetRaw(String key, double offset, long count);
 
     void delZSet(String key);
+
+    long getAutoIncrementId();
 }

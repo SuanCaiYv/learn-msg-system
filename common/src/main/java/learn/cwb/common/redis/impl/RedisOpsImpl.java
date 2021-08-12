@@ -23,6 +23,8 @@ public class RedisOpsImpl implements RedisOps {
 
     static final RedisConfig redisConfig = RedisConfig.getInstance();
 
+    static final String MY_ID = "CWB_CLUSTER_ID";
+
     @Override
     public void setObj(String key, Object value) {
         redisConfig.getRedisCommands().set(key, value);
@@ -83,5 +85,10 @@ public class RedisOpsImpl implements RedisOps {
     @Override
     public void delZSet(String key) {
         redisConfig.getRedisCommands().del(key);
+    }
+
+    @Override
+    public long getAutoIncrementId() {
+        return redisConfig.getRedisCommands().incr(MY_ID);
     }
 }
