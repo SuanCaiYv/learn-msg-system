@@ -122,15 +122,15 @@ public class NativeUtils {
     }
 
     public static String myIP() {
-        try {
-            InetAddress localHost = InetAddress.getLocalHost();
-            String address = "127.0.0.1";
-            // return localHost.getHostAddress();
-            // TODO 小BUG
-            return address;
-        } catch (UnknownHostException e) {
-            return null;
-        }
+        InetAddress localHost = getLocalHostExactAddress();
+        // TODO 小BUG
+        String ip = "127.0.0.1";
+        return ip;
+        // return localHost.getHostAddress();
+    }
+
+    public static String myAddress(int port) {
+        return myIP() + ":" + port;
     }
 
     /**

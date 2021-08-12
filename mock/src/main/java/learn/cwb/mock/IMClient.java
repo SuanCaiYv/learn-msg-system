@@ -65,7 +65,7 @@ public class IMClient {
                             public void channelRead(ChannelHandlerContext ctx, Object msg0) throws Exception {
                                 Msg msg = (Msg) msg0 ;
                                 if (msg.getHead().getType().equals(Msg.Head.Type.TEXT)) {
-                                    LOGGER.info("{}读到了: {}", msg.getHead().getReceiverId(), new String(msg.getBody().getBody()));
+                                    LOGGER.info("用户: 👉{}👈从🥦{}🍋读到了: 😋{}", msg.getHead().getReceiverId(), msg.getHead().getSenderId(), new String(msg.getBody().getBody()));
                                 }
                             }
                         });
