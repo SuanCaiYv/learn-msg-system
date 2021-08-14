@@ -11,6 +11,9 @@ import learn.cwb.im.system.SystemConstant;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.time.Duration;
+import java.util.concurrent.locks.LockSupport;
+
 /**
  * @author CodeWithBuff(给代码来点Buff)
  * @device iMacPro
@@ -39,5 +42,12 @@ public class InstantMessageApplication {
                 })
                 .syncUninterruptibly();
         RunOnAppStart.hookAfterStart();
+        while (true) {
+            LockSupport.parkNanos(Duration.ofSeconds(5).toNanos());
+            for (long a : GlobalVariable.CHANNEL_MAP.keySet()) {
+                System.out.print(a + " ");
+            }
+            System.out.println();
+        }
     }
 }

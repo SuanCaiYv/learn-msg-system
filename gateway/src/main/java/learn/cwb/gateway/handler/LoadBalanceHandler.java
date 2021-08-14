@@ -27,7 +27,7 @@ public class LoadBalanceHandler extends ChannelInboundHandlerAdapter {
             byte[] body = msg.getBody().getBody();
             String address0 = "";
             // 负载均衡
-            if (Arrays.equals(body, Msg.Body.IM)) {
+            if (Arrays.equals(body, Msg.Body.IM) && GlobalVariable.AVAILABLE_IM_SERVERS.size() > 0) {
                 int mod = GlobalVariable.AVAILABLE_IM_SERVERS.size();
                 int size0 = GlobalVariable.AVAILABLE_IM_SERVERS.size();
                 while (senderId >= size0) {
@@ -40,7 +40,7 @@ public class LoadBalanceHandler extends ChannelInboundHandlerAdapter {
                     }
                     -- senderId;
                 }
-            } else if (Arrays.equals(body, Msg.Body.NS)) {
+            } else if (Arrays.equals(body, Msg.Body.NS) && GlobalVariable.AVAILABLE_NS_SERVERS.size() > 0) {
                 int mod = GlobalVariable.AVAILABLE_NS_SERVERS.size();
                 int size0 = GlobalVariable.AVAILABLE_NS_SERVERS.size();
                 while (senderId >= size0) {

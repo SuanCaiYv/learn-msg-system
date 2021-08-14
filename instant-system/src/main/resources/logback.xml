@@ -6,8 +6,13 @@
             <Pattern>%d{yyyy-MM-dd HH:mm:ss} %green(%-5level) %C:%L-%m%n</Pattern>
         </encoder>
     </appender>
-
-    <root level="info">
+    <appender name="FILE" class="ch.qos.logback.core.FileAppender">
+        <file>/Users/joker/Desktop/im.log</file>
+        <encoder>
+            <Pattern>%d{yyyy-MM-dd HH:mm:ss} %green(%-5level) %C:%L-%m%n</Pattern>
+        </encoder>
+    </appender>
+    <root level="warn">
         <appender-ref ref="STDOUT"/>
     </root>
 </configuration>

@@ -24,7 +24,7 @@ public class RedisConfig {
 
     private RedisConfig() {
         final ObjectMapper objectMapper = new ObjectMapper();
-        final RedisClient redisClient = RedisClient.create("redis://127.0.0.1:10200");
+        final RedisClient redisClient = RedisClient.create("redis://127.0.0.1:6379");
         StatefulRedisConnection<String, Object> connection = redisClient.connect(new RedisCodec<>() {
 
             @Override
